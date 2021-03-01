@@ -51,7 +51,7 @@ public class ProductService {
     @Transactional
     public Product delete (Long id){
         Product product =  findById(id);
-        repository.deleteById(product.getId());
+        repository.deleteById(product.getId()) ;
 
         return product;
 
