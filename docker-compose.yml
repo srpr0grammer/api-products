@@ -1,0 +1,27 @@
+version: "3"
+services:
+  db:
+    image: "postgres"
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=product
+    networks:
+      - backend
+  app:
+    image: api-product
+    build: .
+    container_name: api-product
+    ports:
+      - "8081:8080"
+    networks:
+      - backend
+    depends_on:
+      - db
+
+networks:
+  backend:
+    driver: "bridge"
