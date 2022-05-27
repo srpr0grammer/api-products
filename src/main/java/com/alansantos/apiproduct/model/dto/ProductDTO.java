@@ -24,10 +24,4 @@ public class ProductDTO {
     @NotNull(message = "Campo Obrigtório.")
     private Double price;
 
-    public ProductDTO (Product product){
-        id = product.getId();
-        name = product.getName();
-        description = product.getDescription();
-        price = product.getPrice();
-    }
 }

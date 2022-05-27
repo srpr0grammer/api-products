@@ -34,15 +34,13 @@ public class ProductService {
         ));
     }
 
-    @Transactional
     public Product save (Product product){
-
         return repository.save(product);
     }
 
     @Transactional
     public Product update (Product product){
-        product.setId(product.getId());
+        findById(product.getId());
         product = repository.save(product);
 
         return repository.save(product);
@@ -55,18 +53,6 @@ public class ProductService {
 
         return product;
 
-    }
-
-    //converter para DTO
-    public Product fromDTO(ProductDTO productDTO){
-        Product product = Product
-                .builder()
-                .id(productDTO.getId())
-                .description(productDTO.getDescription())
-                .name(productDTO.getName())
-                .price(productDTO.getPrice())
-                .build();
-        return product;
     }
 
     @Transactional(readOnly = true)

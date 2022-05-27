@@ -1,18 +1,15 @@
 package com.alansantos.apiproduct.controllers;
 
-import com.alansantos.apiproduct.controllers.exception.ErrorGenericException;
-import com.alansantos.apiproduct.model.entity.Product;
 import com.alansantos.apiproduct.model.dto.ProductDTO;
+import com.alansantos.apiproduct.model.entity.Product;
 import com.alansantos.apiproduct.service.ProductService;
-
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,15 +20,17 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @GetMapping
     public ResponseEntity<List<ProductDTO>> findAll() {
-        List<Product> list = productService.findAll();
+        List<ProductDTO> body =
+                productService.findAll()
+                        .stream().map(entity -> modelMapper.map(entity, ProductDTO.class))
+                        .collect(Collectors.toList());
 
-        List<ProductDTO> listDto = list.stream()
-                .map(obj -> new ProductDTO(obj))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(listDto);
+        return ResponseEntity.ok(body);
     }
 
     @GetMapping("{id}")
@@ -42,30 +41,19 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity save ( @Valid @RequestBody ProductDTO productDTO){
+    public ResponseEntity<ProductDTO> save ( @Valid @RequestBody ProductDTO productDTO){
+        var product = productService.save(modelMapper.map(productDTO, Product.class));
 
-        try{
-            Product product = productService.fromDTO(productDTO);
-            product = productService.save(product);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(product);
-
-        }
-        catch (ErrorGenericException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
+        return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(product, ProductDTO.class));
 
     }
 
     @PutMapping("{id}")
-    public ResponseEntity <Product> update(@Valid @RequestBody ProductDTO productDTO, @PathVariable Long id){
+    public ResponseEntity <ProductDTO> update(@Valid @RequestBody ProductDTO productDTO, @PathVariable Long id){
+        productDTO.setId(id);
+        var product = productService.update(modelMapper.map(productDTO, Product.class));
 
-        Product product = productService.fromDTO(productDTO);
-        product.setId(id);
-        product = productService.update(product);
-
-        return ResponseEntity.ok(product);
+        return ResponseEntity.ok().body(modelMapper.map(product, ProductDTO.class));
 
     }
 

@@ -1,6 +1,7 @@
 package com.alansantos.apiproduct;
 
 import com.alansantos.apiproduct.repository.ProductRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.boot.SpringApplication;
@@ -15,7 +16,9 @@ public class ApiProductApplication   {
 	}
 
 	@Autowired
-	private ProductRepository productRepository;
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
+	}
 
 
 }
