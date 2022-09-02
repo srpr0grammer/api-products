@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ProductDTO {
 
-
     private Long id;
 
     @NotEmpty(message = "Campo obrigatório!")
